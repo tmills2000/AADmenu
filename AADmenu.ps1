@@ -1,0 +1,57 @@
+$currMenu = 0;
+$menuSelector = 0;
+$email = $env:USERNAME + "@clydeinc.com";
+
+class Menu {
+	[int]$numOptions
+	[String[]] $options 
+
+	## Constructor with array argument. ##
+	## Need to change this so that the Main Menu doesn't have a back option ##
+	Menu ([String[]]$optionList) {
+		$this.options = @(foreach ($option in $optionList) {$option},'Back','Quit')
+	}
+	
+
+	[void] PrintMenu() {
+		$i = 0
+		foreach ($option in $this.options) {
+			Write-Host $option -NoNewline
+			## Format so the options line up ##
+			Write-Host " [ "$i"  ]" 
+			$i++
+		}
+	}
+}
+
+## Need to create a session class for these two ##
+## I think that would be better than having functions ##
+function Establish-Connection {
+	Connect-AzureAD -AccountID $email | Out-Null
+	$connected = $true
+	clear
+	Write-Host "Connected to Azure"
+}
+
+
+function Terminate-Connection {
+	Disconnect-AzureAD
+	$connected = $false
+	Write-Host "Disconnected from Azure"
+	Sleep 1000
+	exit
+}
+
+
+## Start of main code ##
+
+clear;
+echo "Welcome to the AAD Menu."
+Read-Host "Press {Enter} to login to Azure"
+## Establish-Connection
+
+[string[]]$mainListItems = 'One','Two','Three'
+
+[Menu]$Main_Menu = [Menu]::new($mainListItems)
+
+$Main_Menu.PrintMenu()

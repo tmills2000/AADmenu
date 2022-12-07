@@ -1,20 +1,22 @@
-$currMenu = 0;
-$menuSelector = 0;
+currMenu = 0;$menuSelector = 0;
 $email = $env:USERNAME + "@clydeinc.com";
 
 class Menu {
-	[int]$numOptions
-	[String[]] $options 
+	[String[]]$options 
+	[String]$menuName
 
 	## Constructor with array argument. ##
 	## Need to change this so that the Main Menu doesn't have a back option ##
-	Menu ([String[]]$optionList) {
+	Menu ([String]$name, [String[]]$optionList) {
 		$this.options = @(foreach ($option in $optionList) {$option},'Back','Quit')
+		$this.menuName = $name
 	}
 	
 
 	[void] PrintMenu() {
 		$i = 0
+		Write-Host $this.menuName
+		Write-Host "---------------"
 		foreach ($option in $this.options) {
 			Write-Host $option -NoNewline
 			## Format so the options line up ##
@@ -50,8 +52,8 @@ echo "Welcome to the AAD Menu."
 Read-Host "Press {Enter} to login to Azure"
 ## Establish-Connection
 
-[string[]]$mainListItems = 'One','Two','Three'
+$JSON = Get-Content 'menu.json' | Out-String | ConvertFrom-Json
 
-[Menu]$Main_Menu = [Menu]::new($mainListItems)
+[Menu]$Main_Menu = [Menu]::new($JSON.name, $JSON.option)
 
 $Main_Menu.PrintMenu()
